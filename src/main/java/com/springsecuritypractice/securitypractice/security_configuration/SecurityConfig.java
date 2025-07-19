@@ -21,13 +21,17 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.springsecuritypractice.securitypractice.filter.JWTFilter;
 import com.springsecuritypractice.securitypractice.service.MyUserDetailsService;
 
 @Configuration
 public class SecurityConfig {
     @Autowired
     UserDetailsService userDetailsService;
+    @Autowired
+    JWTFilter jwtFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain (HttpSecurity http) throws Exception{
@@ -39,6 +43,7 @@ public class SecurityConfig {
               .anyRequest().authenticated())
         // http.formLogin(Customizer.withDefaults());
         .httpBasic(Customizer.withDefaults())
+        .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
         .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         
